@@ -1,0 +1,22 @@
+{
+    "version" : "1.0",
+    "configurations" : [
+        {
+            "playground" : "standard",
+            "type" : "uni-app:app-android"
+        },
+        {
+            "app" : {
+                "launchtype" : "remote"
+            },
+            "default" : {
+                "launchtype" : "local"
+            },
+            "mp-weixin" : {
+                "launchtype" : "remote"
+            },
+            "provider" : "alipay",
+            "type" : "uniCloud"
+        }
+    ]
+}

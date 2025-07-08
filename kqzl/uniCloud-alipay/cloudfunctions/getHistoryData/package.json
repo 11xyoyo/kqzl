@@ -1,0 +1,11 @@
+{
+  "name": "getHistoryData",
+  "version": "1.0.0",
+  "description": "获取指定时间段的历史数据",
+  "main": "index.js",
+  "dependencies": {
+    "uni-cloud-router": "latest"
+  },
+  "author": "",
+  "license": "ISC"
+}

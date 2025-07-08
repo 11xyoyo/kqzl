@@ -1,0 +1,878 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>空气质量监测系统 - 详细设计文档</title>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10.6.1/dist/mermaid.min.js"></script>
+    <style>
+        body {
+            font-family: 'Microsoft YaHei', Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 10px;
+        }
+        h2 {
+            color: #34495e;
+            border-left: 4px solid #3498db;
+            padding-left: 15px;
+            margin-top: 30px;
+        }
+        h3 {
+            color: #2980b9;
+            margin-top: 25px;
+        }
+        .module {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .flowchart {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 15px 0;
+            text-align: center;
+        }
+        .data-structure {
+            background: #e8f4f8;
+            border-left: 4px solid #17a2b8;
+            padding: 15px;
+            margin: 10px 0;
+            font-family: 'Courier New', monospace;
+        }
+        .api-info {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 10px 0;
+        }
+        .tech-stack {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .tech-item {
+            background: #e3f2fd;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #2196f3;
+        }
+        .warning {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        .success {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        code {
+            background: #f1f1f1;
+            padding: 2px 5px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+        }
+        pre {
+            background: #f8f8f8;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 15px;
+            overflow-x: auto;
+        }
+        .toc {
+            background: #f0f0f0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .toc ul {
+            list-style-type: none;
+            padding-left: 20px;
+        }
+        .toc a {
+            text-decoration: none;
+            color: #2980b9;
+        }
+        .toc a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🌬️ 空气质量监测系统 - 详细设计文档</h1>
+        
+        <div class="toc">
+            <h2>📋 目录</h2>
+            <ul>
+                <li><a href="#overview">1. 系统概述</a></li>
+                <li><a href="#architecture">2. 系统架构</a></li>
+                <li><a href="#modules">3. 核心模块设计</a>
+                    <ul>
+                        <li><a href="#data-collection">3.1 传感器数据采集模块</a></li>
+                        <li><a href="#communication">3.2 数据通信模块</a></li>
+                        <li><a href="#data-upload">3.3 数据上传模块</a></li>
+                        <li><a href="#ai-analysis">3.4 AI问答流程模块</a></li>
+                        <li><a href="#alarm-logic">3.5 报警逻辑模块</a></li>
+                        <li><a href="#chart-display">3.6 图表显示模块</a></li>
+                    </ul>
+                </li>
+                <li><a href="#data-structures">4. 数据结构定义</a></li>
+                <li><a href="#api-interfaces">5. API接口设计</a></li>
+                <li><a href="#tech-stack">6. 技术栈详解</a></li>
+            </ul>
+        </div>
+
+        <section id="overview">
+            <h2>1. 系统概述</h2>
+            <p>空气质量监测系统是一个基于UniApp开发的智能环境监测应用，集成了实时数据采集、历史数据分析、AI智能分析和可视化展示等功能。系统通过华为云IoT平台获取传感器数据，结合AI技术提供专业的环境分析和建议。</p>
+            
+            <div class="success">
+                <strong>核心功能：</strong>
+                <ul>
+                    <li>🌡️ 实时监测温度、湿度、PM2.5、甲醛、VOC、紫外线、噪音等环境参数</li>
+                    <li>📊 多维度数据可视化和历史趋势分析</li>
+                    <li>🤖 AI智能分析和专业建议</li>
+                    <li>🗺️ 设备位置监控和地图显示</li>
+                    <li>⚠️ 智能报警和阈值监测</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="architecture">
+            <h2>2. 系统架构</h2>
+            <div class="flowchart">
+                <div class="mermaid">
+                graph TB
+                    A[前端应用 UniApp] --> B[uniCloud云服务]
+                    B --> C[华为云IoT平台]
+                    C --> D[传感器设备]
+                    B --> E[云数据库]
+                    A --> F[AI服务 DeepSeek]
+                    A --> G[地图服务]
+                    
+                    subgraph "前端模块"
+                        A1[主页面 index.vue]
+                        A2[图表页面 Charts.vue]
+                        A3[AI分析页面 ai.vue]
+                        A4[图表组件 aichart.vue]
+                    end
+                    
+                    subgraph "云函数"
+                        B1[getToken - 获取认证令牌]
+                        B2[getDeviceData - 获取设备数据]
+                        B3[getHistoryData - 获取历史数据]
+                    end
+                    
+                    A --> A1
+                    A --> A2
+                    A --> A3
+                    A --> A4
+                    B --> B1
+                    B --> B2
+                    B --> B3
+                </div>
+            </div>
+        </section>
+
+        <section id="modules">
+            <h2>3. 核心模块设计</h2>
+
+            <div id="data-collection" class="module">
+                <h3>3.1 传感器数据采集模块</h3>
+                <p><strong>功能描述：</strong>通过华为云IoT平台获取传感器设备的实时数据</p>
+                
+                <div class="flowchart">
+                    <div class="mermaid">
+                    flowchart TD
+                        A[开始数据采集] --> B[获取认证Token]
+                        B --> C{Token有效?}
+                        C -->|否| D[调用getToken云函数]
+                        D --> E[华为云IAM认证]
+                        E --> F[返回新Token]
+                        F --> G[存储Token]
+                        C -->|是| H[调用getDeviceData云函数]
+                        G --> H
+                        H --> I[请求设备影子数据]
+                        I --> J[华为云IoT平台]
+                        J --> K[解析响应数据]
+                        K --> L{数据格式正确?}
+                        L -->|否| M[返回错误信息]
+                        L -->|是| N[提取传感器数据]
+                        N --> O[数据格式化]
+                        O --> P[保存到云数据库]
+                        P --> Q[返回处理结果]
+                        Q --> R[更新前端显示]
+                        R --> S[结束]
+                        M --> S
+                    </flowchart>
+                    </div>
+                </div>
+                
+                <div class="data-structure">
+                    <h4>关键输入参数：</h4>
+                    <pre>{
+  "token": "华为云认证令牌"
+}</pre>
+                    
+                    <h4>关键输出数据：</h4>
+                    <pre>{
+  "code": 0,
+  "message": "设备数据获取成功",
+  "data": {
+    "temperature": 25.6,    // 温度 (°C)
+    "humidity": 65.2,       // 湿度 (%)
+    "PM": 35.8,             // PM2.5浓度 (μg/m³)
+    "form": 0.08,           // 甲醛浓度 (mg/m³)
+    "voc": 245.3,           // VOC浓度 (ppb)
+    "uv": 156.7,            // 紫外线强度
+    "noise": 42.5,          // 噪音 (dB)
+    "lon": 116.397128,      // 经度
+    "lat": 39.916527,       // 纬度
+    "timestamp": 1703123456789
+  }
+}</pre>
+                </div>
+                
+                <div class="api-info">
+                    <strong>API端点：</strong> <code>https://c5291326ae.iotda-app.cn-south-4.myhuaweicloud.com/v5/iot/9a8b9ae393844bce8de80dbc4ed08df2/devices/detection_my_air/shadow</code><br>
+                    <strong>请求方法：</strong> GET<br>
+                    <strong>认证方式：</strong> X-Auth-Token Header
+                </div>
+            </div>
+
+            <div id="communication" class="module">
+                <h3>3.2 数据通信模块</h3>
+                <p><strong>功能描述：</strong>负责前端与云服务、IoT平台之间的数据通信</p>
+                
+                <div class="flowchart">
+                    <div class="mermaid">
+                    sequenceDiagram
+                        participant F as 前端应用
+                        participant C as uniCloud
+                        participant H as 华为云IoT
+                        participant D as 云数据库
+                        
+                        F->>C: 调用云函数
+                        C->>H: HTTP请求设备数据
+                        H-->>C: 返回JSON响应
+                        C->>C: 数据解析与验证
+                        C->>D: 保存数据到数据库
+                        D-->>C: 确认保存成功
+                        C-->>F: 返回处理结果
+                        F->>F: 更新UI显示
+                    </sequenceDiagram>
+                    </div>
+                </div>
+                
+                <div class="data-structure">
+                    <h4>通信协议栈：</h4>
+                    <ul>
+                        <li><strong>应用层：</strong> HTTP/HTTPS</li>
+                        <li><strong>数据格式：</strong> JSON</li>
+                        <li><strong>认证方式：</strong> Token-based Authentication</li>
+                        <li><strong>错误处理：</strong> 统一错误码和消息格式</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div id="data-upload" class="module">
+                <h3>3.3 数据上传模块</h3>
+                <p><strong>功能描述：</strong>将采集到的传感器数据上传并存储到云数据库</p>
+                
+                <div class="flowchart">
+                    <div class="mermaid">
+                    flowchart TD
+                        A[接收传感器数据] --> B[数据验证]
+                        B --> C{数据完整性检查}
+                        C -->|失败| D[记录错误日志]
+                        C -->|成功| E[数据格式化]
+                        E --> F[添加时间戳]
+                        F --> G[连接云数据库]
+                        G --> H[插入数据记录]
+                        H --> I{插入成功?}
+                        I -->|失败| J[重试机制]
+                        J --> K{重试次数<3?}
+                        K -->|是| G
+                        K -->|否| L[记录失败日志]
+                        I -->|成功| M[返回成功状态]
+                        D --> N[结束]
+                        L --> N
+                        M --> N
+                    </flowchart>
+                    </div>
+                </div>
+                
+                <div class="data-structure">
+                    <h4>数据库表结构：</h4>
+                    <pre>collection: 'data'
+{
+  "_id": "自动生成的文档ID",
+  "temperature": Number,    // 温度
+  "humidity": Number,       // 湿度
+  "PM": Number,             // PM2.5
+  "form": Number,           // 甲醛
+  "voc": Number,            // VOC
+  "uv": Number,             // 紫外线
+  "noise": Number,          // 噪音
+  "lon": Number,            // 经度
+  "lat": Number,            // 纬度
+  "timestamp": Number,      // 时间戳
+  "create_time": Date       // 创建时间
+}</pre>
+                </div>
+            </div>
+
+            <div id="ai-analysis" class="module">
+                <h3>3.4 AI问答流程模块</h3>
+                <p><strong>功能描述：</strong>集成DeepSeek AI服务，提供智能环境分析和专业建议</p>
+                
+                <div class="flowchart">
+                    <div class="mermaid">
+                    flowchart TD
+                        A[用户发起AI分析] --> B[选择时间范围]
+                        B --> C[获取历史数据]
+                        C --> D[数据预处理]
+                        D --> E[构建分析提示词]
+                        E --> F[调用DeepSeek API]
+                        F --> G{流式响应?}
+                        G -->|是| H[处理流式数据]
+                        G -->|否| I[处理完整响应]
+                        H --> J[实时显示分析结果]
+                        I --> K[打字机效果显示]
+                        J --> L[分析完成]
+                        K --> L
+                        L --> M[保存对话历史]
+                        M --> N[结束]
+                        
+                        subgraph "AI分析内容"
+                            E1[环境数据统计]
+                            E2[趋势分析]
+                            E3[健康建议]
+                            E4[设备控制建议]
+                        end
+                        
+                        E --> E1
+                        E --> E2
+                        E --> E3
+                        E --> E4
+                    </flowchart>
+                    </div>
+                </div>
+                
+                <div class="data-structure">
+                    <h4>AI请求参数：</h4>
+                    <pre>{
+  "model": "deepseek-chat",
+  "messages": [
+    {
+      "role": "system",
+      "content": "你是一位专业的温室植物养护专家..."
+    },
+    {
+      "role": "user",
+      "content": "基于以下环境数据进行分析..."
+    }
+  ],
+  "stream": true,
+  "max_tokens": 4096
+}</pre>
+                    
+                    <h4>分析提示词模板：</h4>
+                    <pre>🌱 **环境数据分析报告**
+📊 **数据统计**: [时间范围] 共 [数据量] 条记录
+🌡️ **温度**: 平均 [avg]°C, 最高 [max]°C, 最低 [min]°C
+💧 **湿度**: 平均 [avg]%, 最高 [max]%, 最低 [min]%
+🌫️ **甲醛**: 平均 [avg]mg/m³, 最高 [max]mg/m³
+🌪️ **VOC**: 平均 [avg]ppb, 最高 [max]ppb
+☀️ **紫外线**: 平均 [avg], 最高 [max]
+🔊 **噪音**: 平均 [avg]dB, 最高 [max]dB
+
+**请提供专业建议:**
+1. 🌡️ **温湿度管理**: 分析当前温湿度是否适宜
+2. 💡 **光照管理**: 评估光照强度建议
+3. 💧 **灌溉管理**: 根据环境湿度建议
+4. 🌿 **植物健康**: 基于整体环境评估
+5. ⚡ **设备控制**: 具体操作建议
+6. 🔮 **预防措施**: 基于趋势的预防建议</pre>
+                </div>
+                
+                <div class="api-info">
+                    <strong>AI服务：</strong> DeepSeek API<br>
+                    <strong>API端点：</strong> <code>https://api.deepseek.com/v1/chat/completions</code><br>
+                    <strong>认证方式：</strong> Bearer Token<br>
+                    <strong>响应格式：</strong> 流式 (Server-Sent Events) 或 完整JSON
+                </div>
+            </div>
+
+            <div id="alarm-logic" class="module">
+                <h3>3.5 报警逻辑模块</h3>
+                <p><strong>功能描述：</strong>基于环境数据阈值进行智能报警和健康评估</p>
+                
+                <div class="flowchart">
+                    <div class="mermaid">
+                    flowchart TD
+                        A[接收实时数据] --> B[阈值检查]
+                        B --> C{温度异常?}
+                        C -->|是| D[温度报警]
+                        C -->|否| E{湿度异常?}
+                        E -->|是| F[湿度报警]
+                        E -->|否| G{PM2.5超标?}
+                        G -->|是| H[空气质量报警]
+                        G -->|否| I{甲醛超标?}
+                        I -->|是| J[甲醛报警]
+                        I -->|否| K{VOC超标?}
+                        K -->|是| L[VOC报警]
+                        K -->|否| M{紫外线过强?}
+                        M -->|是| N[紫外线报警]
+                        M -->|否| O{噪音过大?}
+                        O -->|是| P[噪音报警]
+                        O -->|否| Q[环境正常]
+                        
+                        D --> R[计算AQI指数]
+                        F --> R
+                        H --> R
+                        J --> R
+                        L --> R
+                        N --> S[计算UVI指数]
+                        P --> T[发送通知]
+                        Q --> R
+                        R --> S
+                        S --> T
+                        T --> U[更新UI状态]
+                        U --> V[记录报警日志]
+                        V --> W[结束]
+                    </flowchart>
+                    </div>
+                </div>
+                
+                <div class="data-structure">
+                    <h4>报警阈值配置：</h4>
+                    <pre>const ALARM_THRESHOLDS = {
+  temperature: {
+    min: 16,      // 最低温度 (°C)
+    max: 30,      // 最高温度 (°C)
+    optimal: [20, 26]  // 最适温度范围
+  },
+  humidity: {
+    min: 40,      // 最低湿度 (%)
+    max: 70,      // 最高湿度 (%)
+    optimal: [50, 60]  // 最适湿度范围
+  },
+  PM25: {
+    good: 35,     // 优 (μg/m³)
+    moderate: 75, // 良
+    unhealthy: 115 // 轻度污染
+  },
+  formaldehyde: {
+    safe: 0.1,    // 安全值 (mg/m³)
+    warning: 0.3, // 警告值
+    danger: 0.5   // 危险值
+  },
+  voc: {
+    good: 300,    // 良好 (ppb)
+    moderate: 1000, // 中等
+    poor: 3000    // 差
+  },
+  uv: {
+    low: 2,       // 低
+    moderate: 5,  // 中等
+    high: 7,      // 高
+    veryHigh: 10  // 很高
+  },
+  noise: {
+    quiet: 40,    // 安静 (dB)
+    normal: 55,   // 正常
+    loud: 70      // 吵闹
+  }
+};</pre>
+                    
+                    <h4>AQI计算公式：</h4>
+                    <pre>// PM2.5的AQI计算（简化版）
+function calculatePM25AQI(pm25) {
+  if (pm25 <= 35) {
+    return pm25 * 50 / 35;
+  } else if (pm25 <= 75) {
+    return 50 + (pm25 - 35) * 50 / 40;
+  } else if (pm25 <= 115) {
+    return 100 + (pm25 - 75) * 50 / 40;
+  } else if (pm25 <= 150) {
+    return 150 + (pm25 - 115) * 50 / 35;
+  } else if (pm25 <= 250) {
+    return 200 + (pm25 - 150) * 100 / 100;
+  } else {
+    return 300 + (pm25 - 250) * 200 / 250;
+  }
+}</pre>
+                </div>
+            </div>
+
+            <div id="chart-display" class="module">
+                <h3>3.6 图表显示模块</h3>
+                <p><strong>功能描述：</strong>使用qiun-data-charts组件库实现多维度数据可视化</p>
+                
+                <div class="flowchart">
+                    <div class="mermaid">
+                    flowchart TD
+                        A[用户选择图表类型] --> B[设置时间范围]
+                        B --> C[调用getHistoryData]
+                        C --> D[获取历史数据]
+                        D --> E[数据格式转换]
+                        E --> F{数据类型?}
+                        F -->|单一类型| G[构建单维图表数据]
+                        F -->|全部类型| H[构建多维图表数据]
+                        G --> I[配置图表选项]
+                        H --> I
+                        I --> J[渲染图表组件]
+                        J --> K[显示图表]
+                        K --> L{用户交互?}
+                        L -->|是| M[处理交互事件]
+                        L -->|否| N[等待用户操作]
+                        M --> O[更新图表显示]
+                        O --> N
+                        N --> P[结束]
+                        
+                        subgraph "图表类型"
+                            T1[折线图 - 趋势分析]
+                            T2[柱状图 - 数据对比]
+                            T3[面积图 - 数据分布]
+                            T4[混合图 - 多维展示]
+                        end
+                        
+                        I --> T1
+                        I --> T2
+                        I --> T3
+                        I --> T4
+                    </flowchart>
+                    </div>
+                </div>
+                
+                <div class="data-structure">
+                    <h4>图表配置结构：</h4>
+                    <pre>const chartOptions = {
+  type: 'line',           // 图表类型
+  fontSize: 11,           // 字体大小
+  background: 'none',     // 背景色
+  pixelRatio: 1,         // 像素比
+  animation: true,        // 动画效果
+  enableScroll: true,     // 滚动缩放
+  enableMarkLine: true,   // 标记线
+  dataLabel: false,       // 数据标签
+  dataPointShape: true,   // 数据点形状
+  connectNulls: false,    // 连接空值
+  xAxis: {
+    disableGrid: false,   // 网格线
+    type: 'datetime',     // 时间轴
+    gridType: 'dash',     // 网格类型
+    dashLength: 8         // 虚线长度
+  },
+  yAxis: {
+    gridType: 'dash',
+    dashLength: 8,
+    splitNumber: 5,       // 分割数量
+    min: 0,              // 最小值
+    max: 'auto'          // 最大值
+  },
+  legend: {
+    show: true,          // 显示图例
+    position: 'bottom',  // 位置
+    lineHeight: 25       // 行高
+  },
+  extra: {
+    line: {
+      type: 'curve',     // 曲线类型
+      width: 2,          // 线宽
+      activeType: 'hollow' // 激活类型
+    }
+  }
+};</pre>
+                    
+                    <h4>数据格式转换：</h4>
+                    <pre>// 历史数据转图表数据
+function formatChartData(historyData, dataType) {
+  const categories = [];
+  const series = [];
+  
+  if (dataType === 'all') {
+    // 多维数据处理
+    const dataTypes = ['temperature', 'humidity', 'formaldehyde', 'voc', 'uv', 'noise'];
+    
+    dataTypes.forEach(type => {
+      if (historyData[type] && historyData[type].length > 0) {
+        const data = historyData[type].map(item => item.value);
+        const times = historyData[type].map(item => item.time);
+        
+        if (categories.length === 0) {
+          categories.push(...times);
+        }
+        
+        series.push({
+          name: getDataTypeName(type),
+          data: data
+        });
+      }
+    });
+  } else {
+    // 单一数据处理
+    const data = historyData.map(item => item.value);
+    const times = historyData.map(item => item.time);
+    
+    categories.push(...times);
+    series.push({
+      name: getDataTypeName(dataType),
+      data: data
+    });
+  }
+  
+  return { categories, series };
+}</pre>
+                </div>
+            </div>
+        </section>
+
+        <section id="data-structures">
+            <h2>4. 数据结构定义</h2>
+            
+            <div class="data-structure">
+                <h3>4.1 传感器数据结构</h3>
+                <pre>interface SensorData {
+  temperature: number;    // 温度 (°C)
+  humidity: number;       // 湿度 (%)
+  PM: number;            // PM2.5浓度 (μg/m³)
+  form: number;          // 甲醛浓度 (mg/m³)
+  voc: number;           // VOC浓度 (ppb)
+  uv: number;            // 紫外线强度
+  noise: number;         // 噪音 (dB)
+  lon: number;           // 经度
+  lat: number;           // 纬度
+  timestamp: number;     // 时间戳
+}</pre>
+                
+                <h3>4.2 API响应结构</h3>
+                <pre>interface ApiResponse<T> {
+  code: number;          // 状态码 (0:成功, -1:失败, 401:未授权)
+  message: string;       // 响应消息
+  data: T | null;        // 响应数据
+}</pre>
+                
+                <h3>4.3 历史数据查询参数</h3>
+                <pre>interface HistoryQuery {
+  startTime: number;     // 开始时间戳
+  endTime: number;       // 结束时间戳
+  dataType: string;      // 数据类型 ('all' | 'temperature' | 'humidity' | ...)
+}</pre>
+                
+                <h3>4.4 AI对话数据结构</h3>
+                <pre>interface ChatMessage {
+  role: 'user' | 'assistant' | 'system';  // 角色
+  content: string;                         // 消息内容
+  timestamp?: number;                      // 时间戳
+  ds_loading?: boolean;                    // 加载状态
+}</pre>
+            </div>
+        </section>
+
+        <section id="api-interfaces">
+            <h2>5. API接口设计</h2>
+            
+            <div class="api-info">
+                <h3>5.1 云函数接口</h3>
+                
+                <h4>getToken - 获取认证令牌</h4>
+                <ul>
+                    <li><strong>功能：</strong>获取华为云IoT平台认证Token</li>
+                    <li><strong>参数：</strong>无</li>
+                    <li><strong>返回：</strong>ApiResponse&lt;{token: string, timestamp: number}&gt;</li>
+                </ul>
+                
+                <h4>getDeviceData - 获取设备数据</h4>
+                <ul>
+                    <li><strong>功能：</strong>获取设备实时数据并保存到数据库</li>
+                    <li><strong>参数：</strong>{token: string}</li>
+                    <li><strong>返回：</strong>ApiResponse&lt;SensorData&gt;</li>
+                </ul>
+                
+                <h4>getHistoryData - 获取历史数据</h4>
+                <ul>
+                    <li><strong>功能：</strong>查询指定时间段的历史数据</li>
+                    <li><strong>参数：</strong>HistoryQuery</li>
+                    <li><strong>返回：</strong>ApiResponse&lt;{total: number, list: any, timeRange: object}&gt;</li>
+                </ul>
+            </div>
+            
+            <div class="api-info">
+                <h3>5.2 外部API接口</h3>
+                
+                <h4>华为云IoT设备影子API</h4>
+                <ul>
+                    <li><strong>URL：</strong>https://c5291326ae.iotda-app.cn-south-4.myhuaweicloud.com/v5/iot/{project_id}/devices/{device_id}/shadow</li>
+                    <li><strong>方法：</strong>GET</li>
+                    <li><strong>认证：</strong>X-Auth-Token</li>
+                    <li><strong>响应：</strong>设备影子数据JSON</li>
+                </ul>
+                
+                <h4>DeepSeek AI API</h4>
+                <ul>
+                    <li><strong>URL：</strong>https://api.deepseek.com/v1/chat/completions</li>
+                    <li><strong>方法：</strong>POST</li>
+                    <li><strong>认证：</strong>Bearer Token</li>
+                    <li><strong>支持：</strong>流式响应 (Server-Sent Events)</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="tech-stack">
+            <h2>6. 技术栈详解</h2>
+            
+            <div class="tech-stack">
+                <div class="tech-item">
+                    <h4>🎯 前端框架</h4>
+                    <p><strong>UniApp (Vue.js 2)</strong></p>
+                    <ul>
+                        <li>跨平台开发框架</li>
+                        <li>支持小程序、H5、App</li>
+                        <li>Vue.js语法和生态</li>
+                    </ul>
+                </div>
+                
+                <div class="tech-item">
+                    <h4>🎨 UI组件库</h4>
+                    <p><strong>ColorUI</strong></p>
+                    <ul>
+                        <li>轻量级CSS框架</li>
+                        <li>丰富的组件样式</li>
+                        <li>响应式设计</li>
+                    </ul>
+                </div>
+                
+                <div class="tech-item">
+                    <h4>📊 图表组件</h4>
+                    <p><strong>qiun-data-charts</strong></p>
+                    <ul>
+                        <li>基于uCharts.js</li>
+                        <li>支持多种图表类型</li>
+                        <li>交互式数据可视化</li>
+                    </ul>
+                </div>
+                
+                <div class="tech-item">
+                    <h4>☁️ 云服务</h4>
+                    <p><strong>uniCloud</strong></p>
+                    <ul>
+                        <li>Serverless云开发</li>
+                        <li>云函数计算</li>
+                        <li>云数据库存储</li>
+                    </ul>
+                </div>
+                
+                <div class="tech-item">
+                    <h4>🌐 IoT平台</h4>
+                    <p><strong>华为云IoT</strong></p>
+                    <ul>
+                        <li>设备接入管理</li>
+                        <li>设备影子服务</li>
+                        <li>数据采集与处理</li>
+                    </ul>
+                </div>
+                
+                <div class="tech-item">
+                    <h4>🤖 AI服务</h4>
+                    <p><strong>DeepSeek API</strong></p>
+                    <ul>
+                        <li>大语言模型</li>
+                        <li>流式响应支持</li>
+                        <li>专业领域分析</li>
+                    </ul>
+                </div>
+                
+                <div class="tech-item">
+                    <h4>🗺️ 地图服务</h4>
+                    <p><strong>微信小程序地图API</strong></p>
+                    <ul>
+                        <li>位置显示</li>
+                        <li>标记点管理</li>
+                        <li>地图交互</li>
+                    </ul>
+                </div>
+                
+                <div class="tech-item">
+                    <h4>🔧 开发工具</h4>
+                    <p><strong>HBuilderX</strong></p>
+                    <ul>
+                        <li>UniApp官方IDE</li>
+                        <li>代码提示与调试</li>
+                        <li>多端发布</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <div class="warning">
+            <h3>⚠️ 注意事项</h3>
+            <ul>
+                <li><strong>安全性：</strong>所有API密钥和敏感信息应存储在云函数中，避免在前端暴露</li>
+                <li><strong>性能优化：</strong>大量历史数据查询时应实现分页和缓存机制</li>
+                <li><strong>错误处理：</strong>网络异常、数据格式错误等情况需要完善的错误处理机制</li>
+                <li><strong>数据一致性：</strong>前端字段名称必须与云函数返回的数据结构保持一致</li>
+                <li><strong>实时性：</strong>考虑实现WebSocket或定时轮询机制提高数据实时性</li>
+            </ul>
+        </div>
+        
+        <div class="success">
+            <h3>✅ 系统优势</h3>
+            <ul>
+                <li><strong>跨平台兼容：</strong>一套代码支持多端运行</li>
+                <li><strong>云原生架构：</strong>Serverless架构，弹性扩展</li>
+                <li><strong>智能分析：</strong>AI驱动的专业环境分析</li>
+                <li><strong>实时监控：</strong>多维度环境参数实时监测</li>
+                <li><strong>可视化展示：</strong>丰富的图表和数据可视化</li>
+            </ul>
+        </div>
+    </div>
+    
+    <script>
+        // 初始化Mermaid
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'default',
+            flowchart: {
+                useMaxWidth: true,
+                htmlLabels: true
+            },
+            sequence: {
+                useMaxWidth: true,
+                wrap: true
+            }
+        });
+    </script>
+</body>
+</html>

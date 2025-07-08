@@ -1,0 +1,8 @@
+<svg width="25" height="25" viewBox="0 0 25 25" xmlns="http://www.w3.org/2000/svg">
+  <!-- 外圈 -->
+  <circle cx="12.5" cy="12.5" r="12" fill="#52c41a" stroke="#ffffff" stroke-width="1.5"/>
+  <!-- 内圈 -->
+  <circle cx="12.5" cy="12.5" r="7" fill="#ffffff"/>
+  <!-- 中心点 -->
+  <circle cx="12.5" cy="12.5" r="3.5" fill="#52c41a"/>
+</svg>
